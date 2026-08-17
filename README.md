@@ -43,3 +43,9 @@ Clonar el repositorio:
 
 ```bash
 git clone URL_DEL_REPOSITORIO
+
+## 💻 Enlaces
+
+Documento https://docs.google.com/presentation/d/1S0g0ggI7Jf8MnGfYZZZzv6k7v4butg-r/edit?usp=sharing&ouid=109844500313221973583&rtpof=true&sd=true
+
+Stramlit https://motoia-ghz6k3vpei7yes7h9emfqt.streamlit.app/
