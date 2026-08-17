@@ -20,6 +20,7 @@ orientación inicial para el personal de un taller.
 - GPT-5.6 Luna
 - JSON / Structured Outputs
 - GitHub
+- Stable Diffusion
 
 ## ⚙️ Funcionamiento
 
@@ -38,7 +39,7 @@ Los resultados no sustituyen la inspección física de una motocicleta
 ni el diagnóstico realizado por un mecánico profesional.
 
 
-## 💻 Enlaces
+## 🔗 Enlaces
 
 Documento https://docs.google.com/presentation/d/1S0g0ggI7Jf8MnGfYZZZzv6k7v4butg-r/edit?usp=sharing&ouid=109844500313221973583&rtpof=true&sd=true
 
