@@ -88,10 +88,18 @@ load_dotenv()
 
 api_key = os.getenv("OPENAI_API_KEY")
 
+# Si no se encuentra mediante variables de entorno,
+# intentar obtenerla desde los secrets de Streamlit.
+if not api_key:
+    try:
+        api_key = st.secrets["OPENAI_API_KEY"]
+    except Exception:
+        api_key = None
+
 if not api_key:
     st.error(
         "No se encontró la API Key. "
-        "Verificá que exista el archivo .env."
+        "Verificá la configuración de los secretos."
     )
     st.stop()
 
