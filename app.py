@@ -4,6 +4,7 @@ import json
 import streamlit as st
 from dotenv import load_dotenv
 from openai import OpenAI
+from huggingface_hub import InferenceClient
 
 
 # ============================================================
@@ -105,6 +106,28 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
+# ============================================================
+# CONEXIÓN CON HUGGING FACE
+# ============================================================
+
+hf_token = os.getenv("HF_TOKEN")
+
+if not hf_token:
+    try:
+        hf_token = st.secrets["HF_TOKEN"]
+    except Exception:
+        hf_token = None
+
+if not hf_token:
+    st.error(
+        "No se encontró el token de Hugging Face. "
+        "Verificá la configuración de los secretos."
+    )
+    st.stop()
+
+hf_client = InferenceClient(
+    api_key=hf_token
+)
 
 # ============================================================
 # ENCABEZADO
@@ -205,6 +228,8 @@ def analizar_motocicleta(
     kilometraje,
     problema
 ):
+    
+    
     """
     Envía los datos de la motocicleta al modelo de IA
     y obtiene un diagnóstico estructurado.
@@ -341,6 +366,48 @@ No presentes el diagnóstico como definitivo.
 
 
 # ============================================================
+# GENERACIÓN DE IMAGEN
+# ============================================================
+
+def generar_ilustracion(problema, diagnostico):
+    """
+    Genera una ilustración técnica relacionada con el
+    problema y diagnóstico obtenidos.
+    """
+
+    prompt_imagen = f"""
+        Create a technical educational illustration of a motorcycle
+        mechanical system related to the following diagnostic situation.
+
+        User problem:
+        {problema}
+
+        Orientative diagnosis:
+        {diagnostico}
+
+        The image must be:
+        - A technical mechanical illustration.
+        - Educational and clear.
+        - Focused on motorcycle components.
+        - Suitable for a motorcycle workshop.
+        - Realistic but illustrative.
+        - On a clean background.
+        - Without text labels.
+        - Without people.
+        - Not presented as photographic evidence of a real failure.
+
+        The image is only an educational visualization and must not
+        represent a confirmed mechanical failure.
+        """
+
+    imagen = hf_client.text_to_image(
+        prompt_imagen,
+        model="stabilityai/stable-diffusion-3-medium-diffusers"
+    )
+
+    return imagen
+
+# ============================================================
 # BOTÓN DE ANÁLISIS
 # ============================================================
 
@@ -469,6 +536,46 @@ if st.button(
             st.write(
                 f"• {informacion}"
             )
+
+        # ============================================================
+        # ILUSTRACIÓN GENERADA POR IA
+        # ============================================================
+
+        st.divider()
+
+        st.subheader("🎨 Visualización del diagnóstico")
+
+        st.write(
+            """
+            La siguiente imagen fue generada mediante un modelo
+            de generación de imágenes a partir del problema
+            y diagnóstico obtenidos.
+            
+            Su finalidad es únicamente educativa y orientativa.
+            """
+        )
+
+        with st.spinner("🎨 Generando ilustración..."):
+
+            try:
+
+                imagen = generar_ilustracion(
+                    problema,
+                    resultado["diagnostico"]
+                )
+
+                st.image(
+                    imagen,
+                    caption="Ilustración generada mediante Stable Diffusion"
+                )
+
+            except Exception as error:
+
+                st.warning(
+                    "No fue posible generar la ilustración."
+                )
+
+                st.code(str(error))
 
 
 # ============================================================
